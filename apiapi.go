@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// Item of amiami API
 type Item struct {
 	GCode                 string `json:"gcode"`
 	SCode                 string `json:"scode"`
@@ -18,9 +19,9 @@ type Item struct {
 	GNameSub              string `json:"gname_sub"`
 	GNameSimple           string `json:"sname_simple"`
 	SNameSimpleJ          string `json:"sname_simple_j"`
-	MainImageUrl          string `json:"main_image_url"`
-	Main_imageAlt         string `json:"main_image_alt"`
-	Main_imageTitle       string `json:"main_image_title"`
+	MainImageURL          string `json:"main_image_url"`
+	MainImageAlt          string `json:"main_image_alt"`
+	MainImageTitle        string `json:"main_image_title"`
 	ImageComment          string `json:"image_comment"`
 	Youtube               string `json:"youtube"`
 	ListPrice             int    `json:"list_price"`
@@ -61,7 +62,7 @@ type Item struct {
 	Domesticitem          int    `json:"domesticitem"`
 	Metadescription       string `json:"metadescription"`
 	Metawords             string `json:"metawords"`
-	Releasechange_text    string `json:"releasechange_text"`
+	ReleasechangeText     string `json:"releasechange_text"`
 	Cate1                 []int  `json:"cate1"`
 	Cate2                 []int  `json:"cate2"`
 	Cate3                 []int  `json:"cate3"`
@@ -119,6 +120,7 @@ type Item struct {
 	ThumbAgelimit         int    `json:"thumb_agelimit"`
 }
 
+// ReviewImage struct of amiami API
 type ReviewImage struct {
 	ImageURL string `json:"image_url"`
 	ThumbURL string `json:"thumb_url"`
@@ -126,21 +128,25 @@ type ReviewImage struct {
 	Title    string `json:"title"`
 }
 
+// Maker struct of amiami API
 type Maker struct {
 	ID   int
 	Name string
 }
 
+// Title struct of amiami API
 type Title struct {
 	ID   int
 	Name string
 }
 
+// Name struct of amiami API
 type Name struct {
 	ID   int
 	Name string
 }
 
+// Embed struct of amiami API actually called _embedded
 type Embed struct {
 	ReviewImages   []ReviewImage `json:"review_images"`
 	BonusImages    []ReviewImage `json:"bonus_images"`
@@ -152,6 +158,7 @@ type Embed struct {
 	CharacterNames []Name        `json:"character_names"`
 }
 
+// ProductDetails struct of amiami API
 type ProductDetails struct {
 	RMessage string
 	RSuccess bool
@@ -168,7 +175,8 @@ var defaultHeaders = map[string]string{
 	"x-user-key": "amiami_dev",
 }
 
-func GetBySCode(code string) (ProductDetails, error) {
+// GetItemBySCode from amiami.com
+func GetItemBySCode(code string) (ProductDetails, error) {
 
 	data, err := get(fmt.Sprintf(apiURL, code))
 	if err != nil {

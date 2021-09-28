@@ -4,7 +4,7 @@ import "testing"
 
 func TestGetBySCode(t *testing.T) {
 	t.Run("Default test", func(t *testing.T) {
-		details, err := GetBySCode("FIGURE-131176")
+		details, err := GetItemBySCode("FIGURE-131176")
 		if err != nil {
 			t.Error(err)
 		}

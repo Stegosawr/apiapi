@@ -1,3 +1,6 @@
+[![Go](https://github.com/Stegosawr/apiapi/actions/workflows/go.yml/badge.svg)](https://github.com/Stegosawr/apiapi/actions/workflows/go.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Stegosawr/apiapi)](https://goreportcard.com/report/github.com/Stegosawr/apiapi)
+
 # apiapi
 Small API to get product details from amiami.com
 
