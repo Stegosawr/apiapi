@@ -17,7 +17,7 @@ type Item struct {
 	GName                 string `json:"gname"`
 	SName                 string `json:"sname"`
 	GNameSub              string `json:"gname_sub"`
-	GNameSimple           string `json:"sname_simple"`
+	SNameSimple           string `json:"sname_simple"`
 	SNameSimpleJ          string `json:"sname_simple_j"`
 	MainImageURL          string `json:"main_image_url"`
 	MainImageAlt          string `json:"main_image_alt"`
