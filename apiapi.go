@@ -166,7 +166,17 @@ type ProductDetails struct {
 	Embedded Embed `json:"_embedded"`
 }
 
-const apiURL = "https://api.amiami.com/api/v1.0/item?scode=%s&lang=eng"
+// CodeType of item code
+type CodeType string
+
+const (
+	// CodeTypeG indicates the type of item code is G.
+	CodeTypeG CodeType = "G"
+	// CodeTypeS indicates the type of item code is S.
+	CodeTypeS CodeType = "S"
+)
+
+const apiURL = "https://api.amiami.com/api/v1.0/item?%scode=%s&lang=eng"
 
 var defaultHeaders = map[string]string{
 	"Accept":     "application/json, text/plain, */*",
@@ -175,10 +185,9 @@ var defaultHeaders = map[string]string{
 	"x-user-key": "amiami_dev",
 }
 
-// GetItemBySCode from amiami.com
-func GetItemBySCode(code string) (ProductDetails, error) {
-
-	data, err := get(fmt.Sprintf(apiURL, code))
+// GetItemByCode from amiami.com
+func GetItemByCode(kind CodeType, code string) (ProductDetails, error) {
+	data, err := get(fmt.Sprintf(apiURL, kind, code))
 	if err != nil {
 		return ProductDetails{}, err
 	}
@@ -189,7 +198,7 @@ func GetItemBySCode(code string) (ProductDetails, error) {
 		return ProductDetails{}, err
 	}
 	if !details.RSuccess {
-		return ProductDetails{}, fmt.Errorf("RSuccess: false for %s", fmt.Sprintf(apiURL, "code"))
+		return ProductDetails{}, fmt.Errorf("RSuccess: false for %s", fmt.Sprintf(apiURL, kind, code))
 	}
 
 	return details, nil
