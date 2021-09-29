@@ -176,6 +176,7 @@ const (
 	CodeTypeS CodeType = "S"
 )
 
+// Quotes of the different currencies
 type Quotes struct {
 	USDUSD float64
 	USDAUD float64
@@ -188,6 +189,7 @@ type Quotes struct {
 	USDJPY float64
 }
 
+// CurrencyLayer of amiami
 type CurrencyLayer struct {
 	Success   bool
 	Terms     string
