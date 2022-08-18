@@ -10,7 +10,7 @@ func TestGetByCode(t *testing.T) {
 	}{
 		{
 			Name:     "SCode",
-			In:       "FIGURE-131176",
+			In:       "GOODS-00282398-S001",
 			CodeType: string(CodeTypeS),
 		}, {
 			Name:     "GCode",
