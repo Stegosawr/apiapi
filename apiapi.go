@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -166,6 +167,55 @@ type ProductDetails struct {
 	Embedded Embed `json:"_embedded"`
 }
 
+type ItemList struct {
+	RSuccess     bool        `json:"RSuccess"`
+	RValue       interface{} `json:"RValue"`
+	RMessage     string      `json:"RMessage"`
+	SearchResult struct {
+		TotalResults int `json:"total_results"`
+	} `json:"search_result"`
+	Items []struct {
+		Gcode                  string      `json:"gcode"`
+		Gname                  string      `json:"gname"`
+		ThumbURL               string      `json:"thumb_url"`
+		ThumbAlt               string      `json:"thumb_alt"`
+		ThumbTitle             string      `json:"thumb_title"`
+		MinPrice               int         `json:"min_price"`
+		MaxPrice               int         `json:"max_price"`
+		CPriceTaxed            int         `json:"c_price_taxed"`
+		MakerName              string      `json:"maker_name"`
+		Saleitem               int         `json:"saleitem"`
+		ConditionFlg           int         `json:"condition_flg"`
+		ListPreorderAvailable  int         `json:"list_preorder_available"`
+		ListBackorderAvailable int         `json:"list_backorder_available"`
+		ListStoreBonus         int         `json:"list_store_bonus"`
+		ListAmiamiLimited      int         `json:"list_amiami_limited"`
+		InstockFlg             int         `json:"instock_flg"`
+		OrderClosedFlg         int         `json:"order_closed_flg"`
+		ElementID              interface{} `json:"element_id"`
+		Salestatus             string      `json:"salestatus"`
+		SalestatusDetail       string      `json:"salestatus_detail"`
+		Releasedate            string      `json:"releasedate"`
+		Jancode                string      `json:"jancode"`
+		Preorderitem           int         `json:"preorderitem"`
+		Saletopitem            int         `json:"saletopitem"`
+		ResaleFlg              int         `json:"resale_flg"`
+		PreownedSaleFlg        interface{} `json:"preowned_sale_flg"`
+		ForWomenFlg            int         `json:"for_women_flg"`
+		GenreMoe               int         `json:"genre_moe"`
+		Cate6                  interface{} `json:"cate6"`
+		Cate7                  interface{} `json:"cate7"`
+		BuyFlg                 int         `json:"buy_flg"`
+		BuyPrice               int         `json:"buy_price"`
+		BuyRemarks             interface{} `json:"buy_remarks"`
+		StockFlg               int         `json:"stock_flg"`
+		ImageOn                int         `json:"image_on"`
+		ImageCategory          string      `json:"image_category"`
+		ImageName              string      `json:"image_name"`
+		Metaalt                interface{} `json:"metaalt"`
+	} `json:"items"`
+}
+
 // CodeType of item code
 type CodeType string
 
@@ -199,7 +249,8 @@ type CurrencyLayer struct {
 	Quotes    Quotes
 }
 
-const apiURL = "https://api.amiami.com/api/v1.0/item?%scode=%s&lang=eng"
+const apiItemURL = "https://api.amiami.com/api/v1.0/item?%scode=%s&lang=eng"
+const apiItemListURL = "https://api.amiami.com/api/v1.0/items?pagemax=20&lang=eng&s_keywords=%s"
 const currApiURL = "https://www.amiami.com/files/currencylayer.json"
 
 var defaultHeaders = map[string]string{
@@ -211,7 +262,7 @@ var defaultHeaders = map[string]string{
 
 // GetItemByCode from amiami.com
 func GetItemByCode(kind CodeType, code string) (ProductDetails, error) {
-	data, err := get(fmt.Sprintf(apiURL, kind, code))
+	data, err := get(fmt.Sprintf(apiItemURL, kind, code))
 	if err != nil {
 		return ProductDetails{}, err
 	}
@@ -222,10 +273,42 @@ func GetItemByCode(kind CodeType, code string) (ProductDetails, error) {
 		return ProductDetails{}, err
 	}
 	if !details.RSuccess {
-		return ProductDetails{}, fmt.Errorf("RSuccess: false for %s", fmt.Sprintf(apiURL, kind, code))
+		return ProductDetails{}, fmt.Errorf("RSuccess: false for %s", fmt.Sprintf(apiItemURL, kind, code))
 	}
 
 	return details, nil
+}
+
+func GetItemsByKeywords(keywords string) ([]ProductDetails, error) {
+
+	keywords = strings.ReplaceAll(keywords, "%20", "+")
+
+	data, err := get(fmt.Sprintf(apiItemListURL, keywords))
+	if err != nil {
+		return nil, err
+	}
+
+	iList := ItemList{}
+	err = json.Unmarshal(data, &iList)
+	if err != nil {
+		return nil, err
+	}
+	if !iList.RSuccess {
+		return nil, fmt.Errorf("RSuccess: false for %s", fmt.Sprintf(apiItemListURL, keywords))
+	}
+
+	out := []ProductDetails{}
+	for _, item := range iList.Items {
+		time.Sleep(200 * time.Millisecond)
+		details, err := GetItemByCode(CodeTypeG, item.Gcode)
+		if err != nil {
+			return nil, err
+		}
+
+		out = append(out, details)
+	}
+
+	return out, nil
 }
 
 // GetCurrencyLayer from amiami for currency exchange rates

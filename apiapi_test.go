@@ -2,7 +2,7 @@ package apiapi
 
 import "testing"
 
-func TestGetBySCode(t *testing.T) {
+func TestGetByCode(t *testing.T) {
 	tests := []struct {
 		Name     string
 		In       string
@@ -27,6 +27,32 @@ func TestGetBySCode(t *testing.T) {
 
 			if !details.RSuccess {
 				t.Errorf("Got: %v - want: %v", "false", "true")
+			}
+		})
+	}
+}
+
+func TestGetByKeywords(t *testing.T) {
+	tests := []struct {
+		Name     string
+		Keywords string
+		Want     int
+	}{
+		{
+			Name:     "Default",
+			Keywords: "B-STYLE%20Rent-A-Girlfriend",
+			Want:     3,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			details, err := GetItemsByKeywords(tt.Keywords)
+			if err != nil {
+				t.Error(err)
+			}
+
+			if len(details) < tt.Want {
+				t.Errorf("Got: %v - want: %v", len(details), tt.Want)
 			}
 		})
 	}
