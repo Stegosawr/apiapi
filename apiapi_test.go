@@ -57,16 +57,3 @@ func TestGetByKeywords(t *testing.T) {
 		})
 	}
 }
-
-func TestGetCurrencyLayer(t *testing.T) {
-	t.Run("Default Request Currency Exchange Rate", func(t *testing.T) {
-		cLayer, err := GetCurrencyLayer()
-		if err != nil {
-			t.Error(err)
-		}
-
-		if !cLayer.Success {
-			t.Errorf("Got: %v - want: %v", "false", "true")
-		}
-	})
-}

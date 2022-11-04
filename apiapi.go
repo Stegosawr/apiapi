@@ -225,32 +225,8 @@ const (
 	CodeTypeS CodeType = "S"
 )
 
-// Quotes of the different currencies
-type Quotes struct {
-	USDUSD float64
-	USDAUD float64
-	USDCAD float64
-	USDCNY float64
-	USDEUR float64
-	USDGBP float64
-	USDHKD float64
-	USDKRW float64
-	USDJPY float64
-}
-
-// CurrencyLayer of amiami
-type CurrencyLayer struct {
-	Success   bool
-	Terms     string
-	Privacy   string
-	TimeStamp int
-	Source    string
-	Quotes    Quotes
-}
-
 const apiItemURL = "https://api.amiami.com/api/v1.0/item?%scode=%s&lang=eng"
 const apiItemListURL = "https://api.amiami.com/api/v1.0/items?pagemax=20&lang=eng&s_keywords=%s"
-const currApiURL = "https://www.amiami.com/files/currencylayer.json"
 
 var defaultHeaders = map[string]string{
 	"Accept":     "*/*",
@@ -307,26 +283,6 @@ func GetItemsByKeywords(keywords string) ([]ProductDetails, error) {
 	}
 
 	return out, nil
-}
-
-// GetCurrencyLayer from amiami for currency exchange rates
-func GetCurrencyLayer() (CurrencyLayer, error) {
-
-	data, err := get(currApiURL)
-	if err != nil {
-		return CurrencyLayer{}, err
-	}
-
-	currencyLayer := CurrencyLayer{}
-	err = json.Unmarshal(data, &currencyLayer)
-	if err != nil {
-		return CurrencyLayer{}, err
-	}
-	if !currencyLayer.Success {
-		return CurrencyLayer{}, fmt.Errorf("success = false for %s", currApiURL)
-	}
-
-	return currencyLayer, nil
 }
 
 func get(URL string) ([]byte, error) {
