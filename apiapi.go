@@ -230,7 +230,7 @@ const apiItemListURL = "https://api.amiami.com/api/v1.0/items?pagemax=20&lang=en
 
 var defaultHeaders = map[string]string{
 	"Accept":     "*/*",
-	"User-Agent": "Mozilla/4.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+	"User-Agent": "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)",
 	"Referer":    "https://www.amiami.com/",
 	"x-user-key": "amiami_dev",
 }
