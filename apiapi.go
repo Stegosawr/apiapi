@@ -254,9 +254,8 @@ const apiItemListURL = "https://api.amiami.com/api/v1.0/items?pagemax=20&lang=en
 const currApiURL = "https://www.amiami.com/files/currencylayer.json"
 
 var defaultHeaders = map[string]string{
-	"Accept":     "application/json, text/plain, */*",
-	"User-Agent": "User-AgentMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.45",
-	"Referer":    "https://www.amiami.com/",
+	"Accept":     "*/*",
+	"User-Agent": "Mozilla/4.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
 	"x-user-key": "amiami_dev",
 }
 
