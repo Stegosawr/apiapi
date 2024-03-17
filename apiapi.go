@@ -1,11 +1,11 @@
 package apiapi
 
 import (
-	"crypto/tls"
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
+	"log"
+	"os/exec"
 	"strings"
 	"time"
 )
@@ -228,22 +228,16 @@ const (
 const apiItemURL = "https://api.amiami.com/api/v1.0/item?%scode=%s&lang=eng"
 const apiItemListURL = "https://api.amiami.com/api/v1.0/items?pagemax=20&lang=eng&s_keywords=%s"
 
-var defaultHeaders = map[string]string{
-	"Accept":     "*/*",
-	"User-Agent": "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)",
-	"Referer":    "https://www.amiami.com/",
-	"x-user-key": "amiami_dev",
-}
-
 // GetItemByCode from amiami.com
 func GetItemByCode(kind CodeType, code string) (ProductDetails, error) {
+
 	data, err := get(fmt.Sprintf(apiItemURL, kind, code))
 	if err != nil {
 		return ProductDetails{}, err
 	}
 
 	details := ProductDetails{}
-	err = json.Unmarshal(data, &details)
+	err = json.Unmarshal([]byte(data), &details)
 	if err != nil {
 		return ProductDetails{}, err
 	}
@@ -288,39 +282,15 @@ func GetItemsByKeywords(keywords string) ([]ProductDetails, error) {
 
 func get(URL string) ([]byte, error) {
 
-	client := &http.Client{
-		Transport: &http.Transport{
-			DisableCompression:  true,
-			TLSHandshakeTimeout: 10 * time.Second,
-			TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
-			IdleConnTimeout:     5 * time.Second,
-		},
-		Timeout: 5 * time.Minute,
+	command := []string{"--header", "Referer: https://www.amiami.com/", "--header", "X-User-Key: amiami_dev", URL}
+	cmd := exec.Command("curl_ff117", command...)
+	var inb, outb, errb bytes.Buffer
+	cmd.Stdout = &outb
+	cmd.Stderr = &errb
+	cmd.Stdin = &inb
+	if err := cmd.Run(); err != nil {
+		log.Println(errb.String())
 	}
 
-	req, err := http.NewRequest(http.MethodGet, URL, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	for k, v := range defaultHeaders {
-		req.Header.Set(k, v)
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		if err != io.ErrUnexpectedEOF {
-			return nil, err
-		}
-	}
-
-	return body, nil
-
+	return outb.Bytes(), nil
 }
