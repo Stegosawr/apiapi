@@ -6,6 +6,8 @@ Small API to get product details from amiami.com
 
 ## Usage
 
+Install [curl-impersonate](https://github.com/lwthiker/curl-impersonate).
+
 For the usage please look into the [unit-tests](apiapi_test.go).
 
 ## License
